@@ -93,10 +93,12 @@
 
 ---
 
-- [ ] Task 6: Create `examples/01_quick_start.py` and `examples/02_custom_data.py` (P1)
+- [x] Task 6: Create `examples/01_quick_start.py` and `examples/02_custom_data.py` (P1)
+  - Completed: 2026-05-11 — Created examples/01_quick_start.py (loads german_credit, benchmarks random_forest + logistic_regression, saves PNG + CSV), examples/02_custom_data.py (generates synthetic CSV or accepts --csv/--target args, runs run_benchmark, saves results), examples/README.md (run instructions for both). 10/10 tests pass; 127/129 total.
+  - Security: semgrep clean
   - Acceptance:
     - `python examples/01_quick_start.py` runs end-to-end on bundled German Credit data using
-      RandomForest + XGBoost (always-available baselines), prints a leaderboard table, saves a PNG
+      RandomForest + LogisticRegression, prints a leaderboard table, saves a PNG
     - `python examples/02_custom_data.py` generates a synthetic CSV, loads it via `load_dataset()`,
       runs `run_benchmark()`, prints results
     - Both examples work with only `pip install -e ".[gbdt]"` (no GPU required)
