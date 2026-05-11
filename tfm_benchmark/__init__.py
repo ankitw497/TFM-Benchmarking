@@ -12,10 +12,12 @@ __version__ = "0.1.0"
 
 from tfm_benchmark import cli  # noqa: F401 — make `from tfm_benchmark import cli` work
 from tfm_benchmark.datasets import load_dataset, list_datasets
+from tfm_benchmark.benchmarker import Benchmarker
 
 __all__ = [
     "__version__",
     "cli",
     "load_dataset",
     "list_datasets",
+    "Benchmarker",
 ]

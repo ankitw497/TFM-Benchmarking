@@ -52,7 +52,10 @@
 
 ---
 
-- [ ] Task 4: Create `tfm_benchmark/benchmarker.py` — `Benchmarker` class (P0)
+- [x] Task 4: Create `tfm_benchmark/benchmarker.py` — `Benchmarker` class (P0)
+  - Completed: 2026-05-11 — Benchmarker class with fit_evaluate() (accepts DataFrames or numpy, coerces to pandas, iterates wrappers, sorts results by AUC desc), plot_leaderboard() (delegates to src.visualization), save_results() (creates parent dirs). _try_instantiate() skips models on ImportError. Wired into tfm_benchmark/__init__.py. Test fixes: fixture and numpy test had (X_train, X_test, y_train, y_test) order but fit_evaluate expects (X_train, y_train, X_test, y_test).
+  - Tests: 24 unit tests, all pass. 79/79 total.
+  - Security: semgrep clean
   - Acceptance:
     ```python
     from tfm_benchmark import Benchmarker
