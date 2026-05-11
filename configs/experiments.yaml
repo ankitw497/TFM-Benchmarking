@@ -1,0 +1,122 @@
+# experiments.yaml — Full experiment matrix definition
+# This file defines every experiment the benchmark suite can run.
+
+defaults:
+  random_state: 42
+  n_folds: 5
+  test_size: 0.2
+  val_size: 0.2
+
+datasets:
+  give_me_credit:
+    source: kaggle
+    competition: GiveMeSomeCredit
+    file: cs-training.csv
+    target: SeriousDlqin2yrs
+    task: binary_classification
+
+  german_credit:
+    source: uci
+    id: 144
+    target: class
+    task: binary_classification
+
+  taiwan_credit:
+    source: uci
+    id: 350
+    target: default.payment.next.month
+    task: binary_classification
+
+# Phase 1: Zero-shot (no preprocessing, no tuning)
+zero_shot:
+  models:
+    # --- Tabular Foundation Models ---
+    - name: TabPFN-v2
+      class: tabpfn_wrapper.TabPFNModel
+      params: { version: v2 }
+      max_rows: 10000
+      max_features: 500
+
+    - name: TabPFN-v2.5
+      class: tabpfn_wrapper.TabPFNModel
+      params: { version: v2.5 }
+      max_rows: 50000
+      max_features: 2000
+
+    - name: Real-TabPFN-2.5
+      class: tabpfn_wrapper.TabPFNModel
+      params: { version: v2.5-real }
+      max_rows: 50000
+      max_features: 2000
+
+    - name: TabICLv2
+      class: tabicl_wrapper.TabICLModel
+      params: { version: v2 }
+      max_rows: 1000000
+      max_features: 2000
+
+    - name: TabICL-v1.1
+      class: tabicl_wrapper.TabICLModel
+      params: { version: v1.1 }
+      max_rows: 50000
+      max_features: 500
+
+    - name: Mitra
+      class: mitra_wrapper.MitraModel
+      params: {}
+      max_rows: 10000
+      max_features: 100
+
+    # --- GBDT Baselines ---
+    - name: XGBoost-Default
+      class: gbdt_wrapper.XGBoostModel
+      params: { tuned: false }
+
+    - name: XGBoost-Tuned
+      class: gbdt_wrapper.XGBoostModel
+      params: { tuned: true }
+
+    - name: CatBoost-Default
+      class: gbdt_wrapper.CatBoostModel
+      params: { tuned: false }
+
+    - name: CatBoost-Tuned
+      class: gbdt_wrapper.CatBoostModel
+      params: { tuned: true }
+
+    - name: LightGBM-Default
+      class: gbdt_wrapper.LightGBMModel
+      params: {}
+
+# Phase 2: Fine-tuning
+finetuning:
+  models:
+    - name: TabPFN-v2-finetuned
+      class: tabpfn_wrapper.FinetunedTabPFNModel
+      params:
+        version: v2
+        epochs: 30
+        lr: 1.0e-5
+        batch_size: 20
+
+    - name: TabPFN-v2.5-finetuned
+      class: tabpfn_wrapper.FinetunedTabPFNModel
+      params:
+        version: v2.5
+        epochs: 30
+        lr: 1.0e-5
+        batch_size: 20
+
+# Phase 3: Scaling experiments
+scaling:
+  row_counts: [500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 150000]
+  # Models auto-skip when they exceed their max_rows
+
+# Phase 4: Additional experiments
+additional:
+  missing_value_rates: [0.05, 0.10, 0.20, 0.30, 0.50]
+  calibration_bins: 15
+  ensemble_pairs:
+    - [TabPFN-v2, XGBoost-Tuned]
+    - [TabICLv2, CatBoost-Tuned]
+    - [TabPFN-v2, TabICLv2, Mitra]

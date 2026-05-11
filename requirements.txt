@@ -1,0 +1,68 @@
+# TFM-Benchmarking — pinned requirements
+# For a quick start: pip install -r requirements.txt
+# For selective installs use pyproject.toml optional groups:
+#   pip install -e ".[gbdt,dev]"          # GBDTs + dev tools only
+#   pip install -e ".[tabpfn,tabicl,gbdt]" # TFMs + GBDTs
+#   pip install -e ".[all]"               # Everything (except heavy extras below)
+
+# ── Numerics & data ───────────────────────────────────────────────────────
+numpy>=1.24
+pandas>=2.0
+scipy>=1.10
+
+# ── Machine learning core ─────────────────────────────────────────────────
+scikit-learn>=1.3
+
+# ── Visualisation (required by notebooks and src/visualization/) ──────────
+matplotlib>=3.7
+seaborn>=0.13
+plotly>=5.18
+
+# ── Utilities ─────────────────────────────────────────────────────────────
+pyyaml>=6.0
+tqdm>=4.65
+psutil>=5.9            # Memory usage tracking
+
+# ── Data acquisition ──────────────────────────────────────────────────────
+ucimlrepo>=0.0.6       # Auto-downloads German Credit and Taiwan Credit
+kaggle>=1.6            # Kaggle API for 'Give Me Some Credit'
+jinja2>=3.0            # Required by pandas .style (background_gradient, format)
+                       # Setup: place ~/.kaggle/kaggle.json  (chmod 600)
+                       # See configs/datasets.yaml for full instructions
+
+# ── Tabular Foundation Models ─────────────────────────────────────────────
+tabpfn>=2.0            # TabPFN v1 / v2 / v2.5
+                       # v2.5 extra: huggingface-cli login + accept license
+tabicl>=0.2            # TabICL v1.1 and v2  (BSD-3-Clause, fully open)
+
+# Mitra (via AutoGluon) — heavy ~2 GB, uncomment only if needed:
+# autogluon.tabular>=1.4
+
+# TabDPT — install manually from GitHub:
+#   pip install git+https://github.com/layer6ai-labs/TabDPT.git
+
+# ── Deep Learning ─────────────────────────────────────────────────────────
+torch>=2.1             # PyTorch backend (CPU or CUDA)
+pytorch-tabnet>=4.1    # TabNet
+
+# FT-Transformer — install manually (one of):
+#   pip install rtdl
+#   pip install git+https://github.com/yandex-research/rtdl.git
+
+# ── Gradient Boosted Trees (baselines) ───────────────────────────────────
+xgboost>=2.0
+catboost>=1.2
+lightgbm>=4.0
+
+# ── Hyperparameter optimisation ───────────────────────────────────────────
+optuna>=3.4
+
+# ── Notebooks ─────────────────────────────────────────────────────────────
+jupyter>=1.0
+ipywidgets>=8.0
+nbformat>=5.0
+
+# ── Development / testing ────────────────────────────────────────────────
+pytest>=7.4
+black>=23.0
+ruff>=0.1

@@ -1,0 +1,76 @@
+# datasets.yaml — Dataset registry for TFM Benchmarking
+# Each entry defines source, schema, and download instructions.
+
+give_me_credit:
+  display_name: "Give Me Some Credit"
+  source: kaggle
+  competition: GiveMeSomeCredit
+  file: cs-training.csv
+  target_column: SeriousDlqin2yrs
+  task: binary_classification
+  n_samples: 150000
+  n_features: 10
+  positive_rate: 0.067
+  has_missing: true
+  has_categorical: false
+  license: "Competition data (non-commercial research only)"
+  description: >
+    Predict the probability of financial distress in the next two years.
+    Primary benchmark dataset — large enough to expose scaling differences.
+  download_instructions: |
+    Option 1 (Kaggle API — recommended):
+      1. Create a Kaggle account at https://www.kaggle.com
+      2. Go to Account → API → Create New Token → download kaggle.json
+      3. Place kaggle.json at ~/.kaggle/kaggle.json  (chmod 600)
+      4. Run: kaggle competitions download -c GiveMeSomeCredit -p data/give_me_credit/
+      5. Unzip: unzip data/give_me_credit/give-me-some-credit.zip -d data/give_me_credit/
+    Option 2 (Manual):
+      Download cs-training.csv from https://www.kaggle.com/c/GiveMeSomeCredit/data
+      Place at: data/give_me_credit/cs-training.csv
+    Fallback (synthetic):
+      If neither option is available, the loader generates a 150K-row synthetic
+      dataset with similar statistical properties. Results will differ from paper.
+  local_path: data/give_me_credit/cs-training.csv
+
+german_credit:
+  display_name: "German Credit (Statlog)"
+  source: uci
+  uci_id: 144
+  target_column: class
+  task: binary_classification
+  n_samples: 1000
+  n_features: 20
+  positive_rate: 0.30
+  has_missing: false
+  has_categorical: true
+  license: "CC BY 4.0"
+  description: >
+    Classify credit applicants as good or bad credit risk.
+    Small dataset — ideal for TabPFN v1 (1K row limit) and fine-tuning demos.
+  download_instructions: |
+    Downloaded automatically via ucimlrepo:
+      pip install ucimlrepo
+      python -c "from src.data.loader import load_credit_dataset; load_credit_dataset('german_credit')"
+    Target encoding: 1=good (0), 2=bad (1)
+  local_path: data/german_credit/german_credit.csv
+
+taiwan_credit:
+  display_name: "Default of Credit Card Clients (Taiwan)"
+  source: uci
+  uci_id: 350
+  target_column: default.payment.next.month
+  task: binary_classification
+  n_samples: 30000
+  n_features: 23
+  positive_rate: 0.221
+  has_missing: false
+  has_categorical: true
+  license: "CC BY 4.0"
+  description: >
+    Predict default payment in the next month for Taiwan credit card holders.
+    Medium-sized dataset — good mid-range benchmark between German and GiveMeCredit.
+  download_instructions: |
+    Downloaded automatically via ucimlrepo:
+      pip install ucimlrepo
+      python -c "from src.data.loader import load_credit_dataset; load_credit_dataset('taiwan_credit')"
+  local_path: data/taiwan_credit/taiwan_credit.csv

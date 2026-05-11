@@ -1,0 +1,293 @@
+# models.yaml — Model registry for TFM Benchmarking
+# Documents installation, limits, and license for every benchmarked model.
+
+# ---------------------------------------------------------------------------
+# Tabular Foundation Models (In-Context Learning)
+# ---------------------------------------------------------------------------
+
+TabPFN-v1:
+  class_path: src.models.tabpfn_wrapper.TabPFNModel
+  install: "pip install tabpfn>=2.0"
+  params:
+    version: v1
+    device: cpu
+  max_rows: 1000
+  max_features: 100
+  requires_gpu: false
+  supports_missing: false
+  supports_categorical: false
+  supports_finetuning: false
+  license: Apache 2.0
+  commercial_use: true
+  notes: >
+    Original ICLR 2023 model. CPU only. Hard 1K row limit.
+    Included for historical comparison.
+
+TabPFN-v2:
+  class_path: src.models.tabpfn_wrapper.TabPFNModel
+  install: "pip install tabpfn>=2.0"
+  params:
+    version: v2
+    device: auto
+    n_estimators: 8
+  max_rows: 10000
+  max_features: 500
+  requires_gpu: false
+  supports_missing: true
+  supports_categorical: true
+  supports_finetuning: true
+  license: "Prior Labs License (commercial with attribution)"
+  commercial_use: true
+  notes: >
+    Nature 2025 model. Commercial use OK with attribution:
+    "Built with PriorLabs-TabPFN".
+
+TabPFN-v2.5:
+  class_path: src.models.tabpfn_wrapper.TabPFNModel
+  install: |
+    pip install tabpfn>=2.0
+    huggingface-cli login  # Required for model download
+  params:
+    version: v2.5
+    device: auto
+  max_rows: 50000
+  max_features: 2000
+  requires_gpu: true
+  supports_missing: true
+  supports_categorical: true
+  supports_finetuning: true
+  license: "TabPFN-2.5 License v1.0 — NON-COMMERCIAL ONLY"
+  commercial_use: false
+  notes: >
+    NON-COMMERCIAL license only. Cannot be used for production, business
+    decisions, or revenue generation. Contact sales@priorlabs.ai for a
+    commercial license. Requires HuggingFace login and license acceptance.
+
+Real-TabPFN-2.5:
+  class_path: src.models.tabpfn_wrapper.TabPFNModel
+  install: "pip install tabpfn>=2.0  # + HF login"
+  params:
+    version: v2.5-real
+    device: auto
+  max_rows: 50000
+  max_features: 2000
+  requires_gpu: true
+  supports_missing: true
+  supports_categorical: true
+  license: "TabPFN-2.5 License v1.0 — NON-COMMERCIAL ONLY"
+  commercial_use: false
+  notes: >
+    TabPFN-2.5 fine-tuned on 43 real-world datasets. Same license restrictions
+    as v2.5. This is the default v2.5 classifier.
+
+TabICL-v2:
+  class_path: src.models.tabicl_wrapper.TabICLModel
+  install: "pip install tabicl>=0.2"
+  params:
+    version: v2
+  max_rows: null        # Scales to 1M+ rows
+  max_features: 2000
+  recommended_max_rows: 100000
+  requires_gpu: false
+  supports_missing: true
+  supports_categorical: true
+  supports_finetuning: false
+  license: BSD-3-Clause
+  commercial_use: true
+  notes: >
+    Fully open-source. SOTA on TabArena/TALENT benchmarks.
+    10x faster than TabPFN-2.5. Scales to 1M rows with disk offloading.
+
+TabICL-v1.1:
+  class_path: src.models.tabicl_wrapper.TabICLModel
+  install: "pip install tabicl>=0.2"
+  params:
+    version: v1.1
+  max_rows: null
+  max_features: 500
+  recommended_max_rows: 50000
+  requires_gpu: false
+  supports_missing: true
+  supports_categorical: true
+  supports_finetuning: false
+  license: BSD-3-Clause
+  commercial_use: true
+  notes: "TabICL v1 post-trained on v2 prior. Classification only."
+
+Mitra:
+  class_path: src.models.mitra_wrapper.MitraModel
+  install: "pip install autogluon.tabular>=1.4"
+  params: {}
+  max_rows: null
+  max_features: 100
+  recommended_max_rows: 10000
+  requires_gpu: false
+  supports_missing: true
+  supports_categorical: true
+  license: Apache 2.0
+  commercial_use: true
+  notes: "AutoGluon-based TFM. Heavy install (~2GB). Recommended < 10K rows."
+
+TabDPT:
+  class_path: src.models.tabdpt_wrapper.TabDPTModel
+  install: "pip install git+https://github.com/layer6ai-labs/TabDPT.git"
+  params: {}
+  max_rows: null
+  max_features: 500
+  recommended_max_rows: 10000
+  requires_gpu: true
+  supports_missing: true
+  supports_categorical: true
+  license: MIT
+  commercial_use: true
+  notes: "Combines ICL + self-supervised learning on real data. Requires GitHub install."
+
+# ---------------------------------------------------------------------------
+# Deep Learning Models
+# ---------------------------------------------------------------------------
+
+TabNet:
+  class_path: src.models.tabnet_wrapper.TabNetModel
+  install: "pip install pytorch-tabnet torch>=2.1"
+  params:
+    pretrain: false
+  max_rows: null
+  max_features: null
+  requires_gpu: false
+  supports_missing: false   # Handled internally via imputation
+  supports_categorical: false  # Handled internally via ordinal encoding
+  supports_finetuning: true
+  license: Apache 2.0
+  commercial_use: true
+  notes: >
+    Google's attention-based model with feature importance masks.
+    Generally underperforms tuned GBDTs but provides interpretability.
+    Self-supervised pretraining can improve results with limited labels.
+
+FT-Transformer:
+  class_path: src.models.ft_transformer_wrapper.FTTransformerModel
+  install: "pip install rtdl  # or: pip install git+https://github.com/yandex-research/rtdl.git"
+  params:
+    d_token: 64
+    n_blocks: 3
+    n_epochs: 200
+    patience: 20
+  max_rows: null
+  max_features: null
+  recommended_max_rows: 100000
+  requires_gpu: false
+  supports_missing: true
+  supports_categorical: true
+  supports_finetuning: true
+  license: MIT
+  commercial_use: true
+  notes: >
+    Feature Tokenizer + Transformer (NeurIPS 2021). Competitive with GBDTs
+    on medium-large datasets. Slower without GPU. Trains from scratch per dataset.
+
+# ---------------------------------------------------------------------------
+# Gradient Boosted Decision Trees (Baselines)
+# ---------------------------------------------------------------------------
+
+XGBoost-Default:
+  class_path: src.models.gbdt_wrapper.XGBoostModel
+  install: "pip install xgboost>=2.0"
+  params:
+    tuned: false
+  max_rows: null
+  max_features: null
+  requires_gpu: false
+  supports_missing: true
+  supports_categorical: true
+  license: Apache 2.0
+  commercial_use: true
+  notes: "Default 100-tree XGBoost. Fast, no row limits."
+
+XGBoost-Tuned:
+  class_path: src.models.gbdt_wrapper.XGBoostModel
+  install: "pip install xgboost>=2.0"
+  params:
+    tuned: true
+  max_rows: null
+  max_features: null
+  requires_gpu: false
+  supports_missing: true
+  supports_categorical: true
+  license: Apache 2.0
+  commercial_use: true
+  notes: "500-tree XGBoost with credit-scoring best-practice defaults."
+
+CatBoost-Default:
+  class_path: src.models.gbdt_wrapper.CatBoostModel
+  install: "pip install catboost>=1.2"
+  params:
+    tuned: false
+  max_rows: null
+  max_features: null
+  requires_gpu: false
+  supports_missing: true
+  supports_categorical: true
+  license: Apache 2.0
+  commercial_use: true
+  notes: "Best native categorical support among GBDTs."
+
+CatBoost-Tuned:
+  class_path: src.models.gbdt_wrapper.CatBoostModel
+  install: "pip install catboost>=1.2"
+  params:
+    tuned: true
+  max_rows: null
+  max_features: null
+  requires_gpu: false
+  license: Apache 2.0
+  commercial_use: true
+
+LightGBM-Default:
+  class_path: src.models.gbdt_wrapper.LightGBMModel
+  install: "pip install lightgbm>=4.0"
+  params: {}
+  max_rows: null
+  max_features: null
+  requires_gpu: false
+  supports_missing: true
+  supports_categorical: true
+  license: MIT
+  commercial_use: true
+  notes: "Fastest GBDT. Histogram-based splitting."
+
+# ---------------------------------------------------------------------------
+# Traditional ML Baselines
+# ---------------------------------------------------------------------------
+
+RandomForest-Default:
+  class_path: src.models.sklearn_wrapper.RandomForestWrapper
+  install: "pip install scikit-learn>=1.3  # included in base deps"
+  params:
+    n_estimators: 100
+    random_state: 42
+  max_rows: null
+  max_features: null
+  requires_gpu: false
+  supports_missing: true
+  supports_categorical: true
+  license: BSD-3-Clause
+  commercial_use: true
+  notes: "Ensemble of decision trees. Handles missing/categoricals via internal pipeline."
+
+LogisticRegression:
+  class_path: src.models.sklearn_wrapper.LogisticRegressionWrapper
+  install: "pip install scikit-learn>=1.3  # included in base deps"
+  params:
+    C: 1.0
+    max_iter: 1000
+  max_rows: null
+  max_features: null
+  requires_gpu: false
+  supports_missing: true
+  supports_categorical: true
+  license: BSD-3-Clause
+  commercial_use: true
+  notes: >
+    Linear model with L2 regularisation. Well-calibrated probabilities.
+    Uses median imputation + StandardScaler + ordinal encoding.
+    Interpretable baseline for credit scoring.

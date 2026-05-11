@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2026 Ankit Wahane
+Copyright (c) 2026 TFM-Bench Contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,3 +19,22 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+NOTE: This license applies to the benchmarking code in this repository.
+The models being benchmarked have their own licenses:
+
+- TabPFN v1: Apache 2.0
+- TabPFN v2: Prior Labs License (commercial with attribution)
+- TabPFN v2.5: Non-commercial (tabpfn-2.5-license-v1.0)
+- TabICL / TabICLv2: BSD-3-Clause
+- Mitra: Apache 2.0
+- TabDPT: MIT
+- TabNet: Apache 2.0
+- FT-Transformer: MIT
+- XGBoost: Apache 2.0
+- CatBoost: Apache 2.0
+- LightGBM: MIT
+
+Always check the individual model's license before commercial use.
