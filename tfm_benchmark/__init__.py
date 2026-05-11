@@ -11,8 +11,11 @@ __version__ = "0.1.0"
 # (tabpfn, xgboost, torch, etc.) are not installed.
 
 from tfm_benchmark import cli  # noqa: F401 — make `from tfm_benchmark import cli` work
+from tfm_benchmark.datasets import load_dataset, list_datasets
 
 __all__ = [
     "__version__",
     "cli",
+    "load_dataset",
+    "list_datasets",
 ]

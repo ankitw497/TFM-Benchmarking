@@ -36,7 +36,10 @@
 
 ---
 
-- [ ] Task 3: Create `tfm_benchmark/datasets.py` — unified `load_dataset()` with BYO + bundled support (P0)
+- [x] Task 3: Create `tfm_benchmark/datasets.py` — unified `load_dataset()` with BYO + bundled support (P0)
+  - Completed: 2026-05-11 — Created tfm_benchmark/datasets.py with load_dataset() (bundled names, CSV path, DataFrame) and list_datasets(). Wired into tfm_benchmark/__init__.py. Test fix: reset_index() makes index comparison meaningless; changed to first-row value comparison.
+  - Tests: 27 unit tests, all pass. 55/55 total.
+  - Security: semgrep clean
   - Acceptance:
     - `load_dataset("german_credit")` returns `(X_train, X_test, y_train, y_test)` without Kaggle
     - `load_dataset("synthetic")` returns split synthetic data, no downloads needed
