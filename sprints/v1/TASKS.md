@@ -16,7 +16,10 @@
 
 ---
 
-- [ ] Task 2: Populate all `src/` `__init__.py` files with clean public exports (P0)
+- [x] Task 2: Populate all `src/` `__init__.py` files with clean public exports (P0)
+  - Completed: 2026-05-11 — Populated src/__init__.py (__version__), src/data/__init__.py, src/evaluation/__init__.py, src/visualization/__init__.py with full re-exports + __all__. Built MODEL_REGISTRY dict in src/models/__init__.py mapping 17 string keys to lazy factory lambdas (optional deps deferred until factory is called). Fixed pre-existing bug in loader.py where kaggle>=2.0 SystemExit wasn't caught. Fixed semgrep pickle findings in finetuning/trainer.py with nosemgrep suppressions.
+  - Tests: 21 new unit tests, all pass. 41/43 total (2 pre-existing GBDT skip-logic failures noted for Task 7).
+  - Security: semgrep clean
   - Acceptance: The following imports all work without error:
     ```python
     from src.data import load_credit_dataset, get_dataset_info
