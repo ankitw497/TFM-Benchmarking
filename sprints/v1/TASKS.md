@@ -75,7 +75,9 @@
 
 ---
 
-- [ ] Task 5: Create `tfm_benchmark/api.py` + wire up `tfm_benchmark/__init__.py` (P0)
+- [x] Task 5: Create `tfm_benchmark/api.py` + wire up `tfm_benchmark/__init__.py` (P0)
+  - Completed: 2026-05-11 — Created tfm_benchmark/api.py with run_benchmark() (thin wrapper over Benchmarker.fit_evaluate()) and list_models() (returns all MODEL_REGISTRY keys). Updated tfm_benchmark/__init__.py to expose run_benchmark and list_models; added both to __all__. 25/25 new tests pass; 117/119 total (2 pre-existing xgboost/lightgbm skip-logic failures noted for Task 7).
+  - Security: semgrep clean
   - Acceptance:
     ```python
     from tfm_benchmark import run_benchmark, load_dataset, list_models, Benchmarker
