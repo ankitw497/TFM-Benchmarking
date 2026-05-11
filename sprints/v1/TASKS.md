@@ -122,7 +122,9 @@
 
 ---
 
-- [ ] Task 8: Update README.md with new 5-line quickstart + installation section (P1)
+- [x] Task 8: Update README.md with new 5-line quickstart + installation section (P1)
+  - Completed: 2026-05-11 — Prepended a new "Quick Start" section (before the detailed experimental design) with Installation (base, [gbdt], [all], no-GPU options), a working 5-line example using tfm_benchmark API, BYO-data example, class-based API example, and example script invocations. Replaced stale "Minimal Example" in old Quick Start with research pipeline only. 11/11 tests pass; 157/159 total.
+  - Security: semgrep clean
   - Acceptance:
     - README leads with a "Quick Start" section showing the new API (not `from src.X import ...`)
     - Installation section covers: base install, optional model groups, and "no-GPU" minimal install
