@@ -28,6 +28,7 @@ _KNOWN_MODELS = [
     ("tabpfn_v1",       "TabPFN v1",             "pip install tabpfn>=2.0"),
     ("tabpfn_v2",       "TabPFN v2",             "pip install tabpfn>=2.0"),
     ("tabpfn_v2_5",     "TabPFN v2.5",           "pip install tabpfn>=2.0  (+ HuggingFace login)"),
+    ("tabpfn_v2_5_real","TabPFN v2.5 (real)",    "pip install tabpfn>=2.0  (+ HuggingFace login)"),
     ("tabicl_v2",       "TabICL v2",             "pip install tabicl>=0.2"),
     ("tabicl_v1_1",     "TabICL v1.1",           "pip install tabicl>=0.2"),
     ("mitra",           "Mitra (AutoGluon)",     "pip install autogluon.tabular>=1.4"),
@@ -47,10 +48,16 @@ _KNOWN_MODELS = [
 # ---------------------------------------------------------------------------
 
 def _cmd_list_models(_args: argparse.Namespace) -> None:
+    from tfm_benchmark.api import list_models as _list_models
+
+    # Build lookup from static table for display names / install hints
+    _display = {key: (display, note) for key, display, note in _KNOWN_MODELS}
+
     print("Available models (✅ = installed, ❌ = needs optional dep):\n")
-    for key, display_name, install_note in _KNOWN_MODELS:
+    for key in _list_models():
         installed = _check_model_installed(key)
         status = "✅" if installed else "❌"
+        display_name, install_note = _display.get(key, (key, "see docs"))
         line = f"  {status}  {display_name:<28}  [{key}]"
         if not installed:
             line += f"\n       install: {install_note}"
@@ -112,6 +119,7 @@ def _check_model_installed(model_key: str) -> bool:
         "tabpfn_v1": "tabpfn",
         "tabpfn_v2": "tabpfn",
         "tabpfn_v2_5": "tabpfn",
+        "tabpfn_v2_5_real": "tabpfn",
         "tabicl_v2": "tabicl",
         "tabicl_v1_1": "tabicl",
         "mitra": "autogluon",

@@ -135,15 +135,17 @@
 
 ---
 
-- [ ] Task 9: Add `tfm_benchmark/cli.py` CLI entry point with `--help` (P1)
+- [x] Task 9: Add `tfm_benchmark/cli.py` CLI entry point with `--help` (P1)
+  - Completed: 2026-05-11 — Updated _cmd_list_models to delegate to list_models() (dynamic, always in sync with MODEL_REGISTRY) instead of static list; added missing tabpfn_v2_5_real to _KNOWN_MODELS display table and _check_model_installed mapping; run subcommand already delegates to run_benchmark() + load_dataset(). 22/22 CLI tests pass; 179/181 total.
+  - Security: semgrep clean
   - Acceptance:
-    - `tfm-benchmark --help` prints available commands after install
-    - `tfm-benchmark list-models` prints available models + whether each is installed
-    - `tfm-benchmark list-datasets` prints bundled datasets
-    - `tfm-benchmark run --data german_credit --models xgboost random_forest --output results/` runs and saves CSV
-    - CLI is thin: delegates to `run_benchmark()` and `load_dataset()`
+    - `tfm-benchmark --help` prints available commands after install ✅
+    - `tfm-benchmark list-models` prints all MODEL_REGISTRY keys + installed status ✅
+    - `tfm-benchmark list-datasets` prints bundled datasets ✅
+    - `tfm-benchmark run --data german_credit --models random_forest --output results/` runs and saves CSV ✅
+    - CLI is thin: delegates to `run_benchmark()` and `load_dataset()` ✅
   - Files:
-    - `tfm_benchmark/cli.py` — `argparse`-based CLI with subcommands `list-models`, `list-datasets`, `run`
+    - `tfm_benchmark/cli.py` — updated list-models to use list_models() API dynamically
 
 ---
 
