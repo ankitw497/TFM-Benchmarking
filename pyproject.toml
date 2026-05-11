@@ -1,0 +1,114 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tfm-benchmark"
+version = "0.1.0"
+description = "Benchmarking Tabular Foundation Models on Credit Data"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+
+# Core dependencies — always installed
+dependencies = [
+    # Numerics & data
+    "numpy>=1.24",
+    "pandas>=2.0",
+    "scipy>=1.10",
+
+    # ML core
+    "scikit-learn>=1.3",
+
+    # Utilities
+    "pyyaml>=6.0",
+    "tqdm>=4.65",
+    "psutil>=5.9",
+
+    # Visualisation — required by src/visualization/plots.py and all notebooks
+    "matplotlib>=3.7",
+    "seaborn>=0.13",
+
+    # Data acquisition — needed to download datasets
+    "ucimlrepo>=0.0.6",
+    "kaggle>=1.6",
+
+    # Required by pandas .style (background_gradient, format, etc.)
+    "jinja2>=3.0",
+]
+
+[project.optional-dependencies]
+
+# ── Tabular Foundation Models ─────────────────────────────────────────────
+tabpfn  = ["tabpfn>=2.0"]
+tabicl  = ["tabicl>=0.2"]
+mitra   = ["autogluon.tabular>=1.4"]   # Heavy (~2 GB); install separately if not needed
+
+# ── Deep Learning ─────────────────────────────────────────────────────────
+dl = [
+    "torch>=2.1",
+    "pytorch-tabnet>=4.1",
+    # FT-Transformer (rtdl):
+    #   pip install rtdl
+    #   OR: pip install git+https://github.com/yandex-research/rtdl.git
+    # TabDPT:
+    #   pip install git+https://github.com/layer6ai-labs/TabDPT.git
+]
+
+# ── Gradient Boosted Trees ────────────────────────────────────────────────
+gbdt = [
+    "xgboost>=2.0",
+    "catboost>=1.2",
+    "lightgbm>=4.0",
+]
+
+# ── Hyperparameter optimisation ───────────────────────────────────────────
+hpo = ["optuna>=3.4"]
+
+# ── Interactive visualisation (Plotly) ───────────────────────────────────
+plotly = ["plotly>=5.18"]
+
+# ── Notebooks ────────────────────────────────────────────────────────────
+notebooks = [
+    "jupyter>=1.0",
+    "ipywidgets>=8.0",
+    "nbformat>=5.0",
+]
+
+# ── Fine-tuning convenience group ────────────────────────────────────────
+finetuning = [
+    "tabpfn>=2.0",
+    "torch>=2.1",
+    "pytorch-tabnet>=4.1",
+]
+
+# ── Development / testing ────────────────────────────────────────────────
+dev = [
+    "pytest>=7.4",
+    "black>=23.0",
+    "ruff>=0.1",
+]
+
+# ── "all" — installs everything except the heavy optional packages ────────
+all = [
+    "tfm-benchmark[tabpfn,tabicl,gbdt,dl,hpo,plotly,notebooks,dev]",
+    # Excluded (too heavy for CI / general install):
+    #   mitra  → pip install autogluon.tabular>=1.4
+    #   rtdl   → pip install rtdl
+    #   tabdpt → pip install git+https://github.com/layer6ai-labs/TabDPT.git
+]
+
+[project.scripts]
+tfm-benchmark = "tfm_benchmark.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*", "tfm_benchmark*"]
+
+[tool.black]
+line-length = 100
+
+[tool.ruff]
+line-length = 100
+select = ["E", "F", "W", "I"]
+ignore = ["E501"]
