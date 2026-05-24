@@ -14,6 +14,7 @@ Usage
 
 from __future__ import annotations
 
+import warnings
 from pathlib import Path
 from typing import List, Optional, Union
 
@@ -243,14 +244,25 @@ class Benchmarker:
     def _resolve_wrappers(self):
         """
         Turn ``self.models`` into a list of ``(registry_key, BaseModelWrapper)``
-        pairs, trying to import each factory and skipping quietly on
-        ``ImportError``.
+        pairs, trying to import each factory and skipping on ``ImportError``.
+
+        For **explicit** model lists, skipped models are printed (verbose only).
+
+        For **auto** mode:
+          - Skipped models trigger ``warnings.warn()`` regardless of verbosity
+            so the information appears in logs.
+          - If *no* models can be instantiated, raises ``RuntimeError``.
 
         Returns
         -------
         list of (str, BaseModelWrapper)
             Each element is ``(model_key, wrapper)`` so the registry key is
             carried alongside the wrapper and can be stored in results.
+
+        Raises
+        ------
+        RuntimeError
+            When ``models="auto"`` and zero wrappers could be instantiated.
         """
         if isinstance(self.models, list):
             keyed = []
@@ -266,12 +278,36 @@ class Benchmarker:
                         print(f"  [{m}] SKIP (optional dependency not installed)")
             return keyed
 
-        # "auto" mode: try every registry entry, skip on ImportError
+        # "auto" mode: try every registry entry, collect skip reasons.
         keyed = []
+        skipped: list[tuple[str, str]] = []  # [(key, reason), ...]
         for key in MODEL_REGISTRY:
-            wrapper = _try_instantiate(key)
-            if wrapper is not None:
+            try:
+                wrapper = MODEL_REGISTRY[key]()
                 keyed.append((key, wrapper))
+            except ImportError as exc:
+                skipped.append((key, str(exc)))
+
+        if skipped:
+            skip_summary = ", ".join(
+                f"{key} ({reason})" for key, reason in skipped
+            )
+            msg = (
+                f"Skipped {len(skipped)} model(s) in auto mode because their "
+                f"optional libraries are not installed: {skip_summary}"
+            )
+            if self.verbose:
+                print(f"  [auto] {msg}")
+            warnings.warn(msg, UserWarning, stacklevel=3)
+
+        if not keyed:
+            raise RuntimeError(
+                "No models could be instantiated in auto mode. "
+                "Install at least one optional model library "
+                "(e.g. `pip install scikit-learn`) or pass an explicit "
+                "model list via `models=['random_forest']`."
+            )
+
         return keyed
 
     def _require_results(self, method_name: str) -> None:
