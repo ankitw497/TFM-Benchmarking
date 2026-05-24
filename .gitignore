@@ -51,4 +51,11 @@ results/*.csv
 results/*.png
 results/*.pdf
 results/figures/
+
+# Model checkpoints (large binary files downloaded at runtime)
+*.ckpt
+*.pt
+*.pth
+*.bin
+
 sprints/
