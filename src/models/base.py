@@ -14,6 +14,7 @@ from sklearn.metrics import (
     roc_auc_score, accuracy_score, log_loss, brier_score_loss,
     f1_score, classification_report
 )
+from src.evaluation.memory import get_peak_memory
 
 
 @dataclass
@@ -186,7 +187,7 @@ class BaseModelWrapper(ABC):
             result.ece = _compute_ece(y_test.values, y_score, n_bins=15)
 
             # Track memory
-            result.peak_memory_mb = _get_peak_memory()
+            result.peak_memory_mb = get_peak_memory()
 
         except Exception as e:
             result.success = False
@@ -210,11 +211,3 @@ def _compute_ece(y_true: np.ndarray, y_prob: np.ndarray, n_bins: int = 15) -> fl
     return ece / len(y_true)
 
 
-def _get_peak_memory() -> float:
-    """Get peak memory usage in MB."""
-    try:
-        import psutil
-        process = psutil.Process()
-        return process.memory_info().rss / (1024 * 1024)
-    except ImportError:
-        return 0.0
