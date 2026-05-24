@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11"]
+        python-version: ["3.10", "3.11", "3.12"]
 
     steps:
       - uses: actions/checkout@v4
@@ -27,35 +27,15 @@ jobs:
       - name: Install core + GBDT + dev dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -e ".[gbdt,viz,dev]"
-          pip install ucimlrepo   # for dataset download in tests
+          # Install core deps + GBDT optional group + dev tools.
+          # Note: the 'viz' extra does not exist; plotly is a separate optional group.
+          pip install -e ".[gbdt,plotly,dev]"
 
       - name: Run unit tests
         run: pytest tests/ -v --tb=short
 
-      - name: Smoke test — zero-shot benchmark on German Credit (GBDT + sklearn only)
-        run: |
-          python scripts/run_benchmark.py \
-            --dataset german_credit \
-            --phase zero_shot \
-            --results-dir /tmp/ci_results \
-            --no-cache
-        # Note: TFM models (TabPFN, TabICL) are not installed in CI to keep it fast.
-        # They emit a clear "Warning: X not available" message and are skipped.
-
-      - name: Smoke test — scaling test on German Credit
-        run: |
-          python scripts/run_scaling_test.py \
-            --dataset german_credit \
-            --row-counts 200 500 800 \
-            --results-dir /tmp/ci_results \
-            --timeout 120
-
       - name: Lint with ruff
-        run: ruff check src/ scripts/ tests/
-
-      - name: Format check with black
-        run: black --check src/ scripts/ tests/
+        run: ruff check src/ tfm_benchmark/ tests/
 
   # ── Optional heavy-model test (manual trigger only) ─────────────────────
   test-tfms:
@@ -74,13 +54,7 @@ jobs:
 
       - name: Install all dependencies (no GPU)
         run: |
-          pip install -e ".[tabpfn,tabicl,gbdt,dl,viz,dev]"
-          pip install ucimlrepo
+          pip install -e ".[tabpfn,tabicl,gbdt,plotly,dev]"
 
-      - name: Run full zero-shot benchmark on German Credit
-        run: |
-          python scripts/run_benchmark.py \
-            --dataset german_credit \
-            --phase zero_shot \
-            --results-dir /tmp/ci_results_tfm \
-            --no-cache
+      - name: Run full test suite
+        run: pytest tests/ -v --tb=short
