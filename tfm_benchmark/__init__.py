@@ -4,7 +4,7 @@ tfm_benchmark — Benchmarking Tabular Foundation Models.
 High-level public API. Full internals live in src/.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 # Populated progressively as sub-modules are implemented (Tasks 3-5).
 # Import guards keep the package importable even if optional dependencies
