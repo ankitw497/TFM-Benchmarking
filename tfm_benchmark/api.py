@@ -168,7 +168,7 @@ def run_benchmark_suite(
         if isinstance(ds, str):
             dataset_name = ds
             try:
-                X_train, y_train, X_test, y_test = load_dataset(ds)
+                X_train, X_test, y_train, y_test = load_dataset(ds)
             except Exception as exc:
                 warnings.warn(
                     f"run_benchmark_suite: failed to load named dataset {ds!r}: {exc}",
