@@ -42,6 +42,11 @@ class Benchmarker:
         Phase label written into results (default: ``"zero_shot"``).
     verbose : bool
         Print per-model progress lines (default: ``True``).
+    preprocessing : bool
+        When ``True``, fit a :class:`~src.data.preprocessor.BasicPreprocessor`
+        on ``X_train`` and transform both splits before passing them to any
+        model.  The preprocessor is fit **once** per ``fit_evaluate()`` call,
+        not once per model.  Default: ``False`` (unchanged behaviour).
     """
 
     def __init__(
@@ -50,10 +55,12 @@ class Benchmarker:
         dataset_name: str = "custom",
         phase: str = "zero_shot",
         verbose: bool = True,
+        preprocessing: bool = False,
     ):
         self.dataset_name = dataset_name
         self.phase = phase
         self.verbose = verbose
+        self.preprocessing = preprocessing
         self.results_: Optional[pd.DataFrame] = None
 
         self.models = self._validate_models(models)
@@ -86,6 +93,14 @@ class Benchmarker:
             X_train, X_test, y_train, y_test
         )
 
+        # Optional preprocessing — fit once on train, transform both splits.
+        if self.preprocessing:
+            from src.data.preprocessor import BasicPreprocessor
+            pp = BasicPreprocessor()
+            pp.fit(X_train)
+            X_train = pp.transform(X_train)
+            X_test = pp.transform(X_test)
+
         # Resolve "auto" lazily here so registry is queried at run-time.
         # Returns list of (registry_key, wrapper) pairs so the key can be
         # stored alongside the wrapper's own display name in results.
@@ -109,7 +124,9 @@ class Benchmarker:
                 else:
                     print(f"SKIP  {result.error_message[:60]}")
 
-            records.append(result.to_dict())
+            row = result.to_dict()
+            row["preprocessing"] = self.preprocessing
+            records.append(row)
 
         df = pd.DataFrame(records)
 

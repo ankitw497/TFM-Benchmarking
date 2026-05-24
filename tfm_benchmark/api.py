@@ -39,6 +39,7 @@ def run_benchmark(
     dataset_name: str = "custom",
     random_state: int = 42,
     verbose: bool = True,
+    preprocessing: bool = False,
     **kwargs,
 ) -> pd.DataFrame:
     """Benchmark one or more models on a pre-split dataset.
@@ -64,6 +65,10 @@ def run_benchmark(
         Passed through to Benchmarker for reproducibility (default: 42).
     verbose : bool
         Print per-model progress lines (default: ``True``).
+    preprocessing : bool
+        When ``True``, apply :class:`~src.data.preprocessor.BasicPreprocessor`
+        (median imputation + scaling + OHE) before passing data to any model.
+        The preprocessor is fit on training data only (default: ``False``).
     **kwargs
         Extra keyword arguments forwarded to
         :class:`~tfm_benchmark.Benchmarker`.
@@ -73,7 +78,7 @@ def run_benchmark(
     pd.DataFrame
         One row per model, sorted by AUC-ROC descending.  Always contains
         at minimum: ``model_name``, ``auc_roc``, ``success``,
-        ``dataset_name``.
+        ``dataset_name``, ``preprocessing``.
 
     Raises
     ------
@@ -93,6 +98,7 @@ def run_benchmark(
         models=models,
         dataset_name=dataset_name,
         verbose=verbose,
+        preprocessing=preprocessing,
         **kwargs,
     )
     return b.fit_evaluate(X_train, y_train, X_test, y_test)
