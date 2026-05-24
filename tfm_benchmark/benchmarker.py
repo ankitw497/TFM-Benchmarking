@@ -86,11 +86,13 @@ class Benchmarker:
             X_train, X_test, y_train, y_test
         )
 
-        # Resolve "auto" lazily here so registry is queried at run-time
-        wrappers = self._resolve_wrappers()
+        # Resolve "auto" lazily here so registry is queried at run-time.
+        # Returns list of (registry_key, wrapper) pairs so the key can be
+        # stored alongside the wrapper's own display name in results.
+        keyed_wrappers = self._resolve_wrappers()
 
         records = []
-        for wrapper in wrappers:
+        for model_key, wrapper in keyed_wrappers:
             if self.verbose:
                 print(f"  [{wrapper.name}]", end=" ", flush=True)
 
@@ -98,6 +100,7 @@ class Benchmarker:
                 X_train, y_train, X_test, y_test,
                 dataset_name=self.dataset_name,
                 phase=self.phase,
+                model_key=model_key,
             )
 
             if self.verbose:
@@ -220,33 +223,39 @@ class Benchmarker:
 
         return models
 
-    def _resolve_wrappers(self) -> List[BaseModelWrapper]:
+    def _resolve_wrappers(self):
         """
-        Turn ``self.models`` into a concrete list of ``BaseModelWrapper``
-        instances, trying to import each factory and skipping quietly on
+        Turn ``self.models`` into a list of ``(registry_key, BaseModelWrapper)``
+        pairs, trying to import each factory and skipping quietly on
         ``ImportError``.
+
+        Returns
+        -------
+        list of (str, BaseModelWrapper)
+            Each element is ``(model_key, wrapper)`` so the registry key is
+            carried alongside the wrapper and can be stored in results.
         """
         if isinstance(self.models, list):
-            # Already-validated list: instantiate string keys
-            wrappers = []
+            keyed = []
             for m in self.models:
                 if isinstance(m, BaseModelWrapper):
-                    wrappers.append(m)
+                    # Instance passed directly — use the wrapper's name as key
+                    keyed.append((m.name, m))
                 else:
                     wrapper = _try_instantiate(m)
                     if wrapper is not None:
-                        wrappers.append(wrapper)
+                        keyed.append((m, wrapper))
                     elif self.verbose:
                         print(f"  [{m}] SKIP (optional dependency not installed)")
-            return wrappers
+            return keyed
 
         # "auto" mode: try every registry entry, skip on ImportError
-        wrappers = []
+        keyed = []
         for key in MODEL_REGISTRY:
             wrapper = _try_instantiate(key)
             if wrapper is not None:
-                wrappers.append(wrapper)
-        return wrappers
+                keyed.append((key, wrapper))
+        return keyed
 
     def _require_results(self, method_name: str) -> None:
         if self.results_ is None:

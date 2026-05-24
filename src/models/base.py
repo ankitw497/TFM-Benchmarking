@@ -61,6 +61,10 @@ class BenchmarkResult:
     n_test: int = 0
     n_features: int = 0
 
+    # Registry key — the stable string key used in MODEL_REGISTRY (e.g. "random_forest").
+    # Distinct from model_name which is the wrapper's human-readable display name.
+    model_key: str = ""
+
     # Status
     success: bool = True
     error_message: str = ""
@@ -120,13 +124,21 @@ class BaseModelWrapper(ABC):
         y_test: pd.Series,
         dataset_name: str = "unknown",
         phase: str = "zero_shot",
+        model_key: str = "",
     ) -> BenchmarkResult:
         """
         Full evaluation pipeline: fit → predict → compute metrics.
         Handles errors gracefully and tracks timing.
+
+        Parameters
+        ----------
+        model_key : str
+            The stable MODEL_REGISTRY key (e.g. ``"random_forest"``).
+            Stored in the result alongside the display ``model_name``.
         """
         result = BenchmarkResult(
             model_name=self.name,
+            model_key=model_key,
             dataset_name=dataset_name,
             phase=phase,
             n_train=len(X_train),
